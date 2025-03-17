@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project version="4">
-  <component name="ProjectModuleManager">
-    <modules>
-      <module fileurl="file://$PROJECT_DIR$/AnalyticsService/AnalyticsService.iml" filepath="$PROJECT_DIR$/AnalyticsService/AnalyticsService.iml" />
-      <module fileurl="file://$PROJECT_DIR$/QuarkusProjectManagementSystem.iml" filepath="$PROJECT_DIR$/QuarkusProjectManagementSystem.iml" />
-    </modules>
-  </component>
-</project>
