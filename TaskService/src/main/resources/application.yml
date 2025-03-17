@@ -1,0 +1,60 @@
+quarkus:
+  http:
+    port: ${SERVER_PORT:5002}
+  application:
+    name: task-service
+    version: 1.0.0
+  datasource:
+    db-kind: postgresql
+    username: ${APP_POSTGRESQL_USER:postgres}
+    password: ${APP_POSTGRESQL_PASSWORD:postgres}
+    reactive:
+      url: vertx-reactive:postgresql://${APP_POSTGRESQL_HOST:localhost}:${APP_POSTGRESQL_PORT:5432}/${APP_POSTGRESQL_NAME:tasks_db}
+    jdbc: false
+
+  hibernate-orm:
+    database:
+      generation: update
+    log:
+      sql: false
+
+  jwt:
+    token-lifetime: 36000
+    issuer: "Quakus" # ??????
+    sign:
+      key:
+        secret: my_super_secret_key_my_super_secret_key
+
+  micrometer:
+    export:
+      prometheus:
+        enabled: true
+
+
+kafka:
+  bootstrap-servers:
+    - ${KAFKA_URL:localhost:9092}
+  consumer:
+    group-id: analytics-group
+    auto-offset-reset: earliest
+    key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+    value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+    properties:
+      spring.json.trusted.packages: ru.itmo.apiobjects.kafka.model
+  producer:
+    key-serializer: org.apache.kafka.common.serialization.StringSerializer
+    value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+
+mp:
+  messaging:
+    incoming:
+      task-requests:
+        connector: smallrye-kafka
+        topic: task-requests
+        bootstrap.servers: ${KAFKA_URL:localhost:9092}
+        group.id: task-group
+    outgoing:
+      task-responses:
+        connector: smallrye-kafka
+        topic: task-responses
+        bootstrap.servers: ${KAFKA_URL:localhost:9092}

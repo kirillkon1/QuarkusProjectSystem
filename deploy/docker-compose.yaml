@@ -1,0 +1,148 @@
+#---------------------Микросервисы------------------------#
+
+services:
+#  config-server:
+#    container_name: server-config
+#    build: ../CloudConfig
+#    environment:
+#      - SERVER_PORT=${ENV_SERVER_CONFIG_PORT}
+#    ports:
+#      - ${ENV_SERVER_CONFIG_PORT}:${ENV_SERVER_CONFIG_PORT}
+#    networks:
+#      - microservices-network
+#    logging:
+#      driver: "json-file"
+#      options:
+#        max-size: "10m"
+#        max-file: "3"
+
+  api-gateway-quarkus:
+    container_name: Api-Gateway-quarkus
+    build: ../ApiGateway
+    environment:
+      - SERVER_PORT=${ENV_API_GATEWAY_PORT}
+      - CLOUD_CONFIG_URL=${ENV_SERVER_CONFIG_HOST}:${ENV_SERVER_CONFIG_PORT}
+      - USER_SERVICE=http://user-service-quarkus:${ENV_USERS_SERVICE_PORT}
+      - TASK_SERVICE=http://task-service-quarkus:${ENV_TASKS_SERVICE_PORT}
+      - PROJECT_SERVICE=http://project-service-quarkus:${ENV_PROJECTS_SERVICE_PORT}
+      - ANALYTICS_SERVICE=http://analytics-service-quarkus:${ENV_ANALYTICS_SERVICE_PORT}
+    ports:
+      - ${ENV_API_GATEWAY_PORT}:${ENV_API_GATEWAY_PORT}
+    networks:
+      - microservices-network
+    depends_on:
+      - user-service-quarkus
+#      - task-manager-service
+#      - project-manager-service
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  user-service-quarkus:
+    container_name: users-service-quarkus
+    build: ../UserService
+    ports:
+      - ${ENV_USERS_SERVICE_PORT}:${ENV_USERS_SERVICE_PORT}
+    environment:
+      - SERVER_PORT=${ENV_USERS_SERVICE_PORT}
+      - CLOUD_CONFIG_URL=${ENV_SERVER_CONFIG_HOST}:${ENV_SERVER_CONFIG_PORT}
+      # PostgreSQL
+      - APP_POSTGRESQL_HOST=${ENV_APP_POSTGRESQL_HOST}
+      - APP_POSTGRESQL_PORT=${ENV_APP_POSTGRESQL_PORT}
+      - APP_POSTGRESQL_NAME=${ENV_USERS_SERVICE_DATABASE}
+      - APP_POSTGRESQL_USER=${ENV_APP_POSTGRESQL_USER}
+      - APP_POSTGRESQL_PASSWORD=${ENV_APP_POSTGRESQL_PASSWORD}
+#    depends_on:
+#      - postgres
+#      - config-server
+    networks:
+      - microservices-network
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+#  task-manager-service:
+#    container_name: tasks-service
+#    build: ../TaskManagementService
+#    ports:
+#      - "8002:8002"
+#    environment:
+#      - SERVER_PORT=${ENV_PROJECTS_SERVICE_PORT}
+#      - CLOUD_CONFIG_URL=${ENV_SERVER_CONFIG_HOST}:${ENV_SERVER_CONFIG_PORT}
+#      # PostgreSQL
+#      - APP_POSTGRESQL_HOST=${ENV_APP_POSTGRESQL_HOST}
+#      - APP_POSTGRESQL_PORT=${ENV_APP_POSTGRESQL_PORT}
+#      - APP_POSTGRESQL_NAME=${ENV_PROJECTS_SERVICE_DATABASE}
+#      - APP_POSTGRESQL_USER=${ENV_APP_POSTGRESQL_USER}
+#      - APP_POSTGRESQL_PASSWORD=${ENV_APP_POSTGRESQL_PASSWORD}
+#      #Kafka
+#      - KAFKA_URL=${ENV_KAFKA_URL}
+#    depends_on:
+#      - postgres
+#      - config-server
+#    networks:
+#      - microservices-network
+#    logging:
+#      driver: "json-file"
+#      options:
+#        max-size: "10m"
+#        max-file: "3"
+#
+#  project-manager-service:
+#    container_name: projects-service
+#    build: ../ProjectManagementService
+#    ports:
+#      - "8003:8003"
+#    environment:
+#      - SERVER_PORT=${ENV_PROJECTS_SERVICE_PORT}
+#      - CLOUD_CONFIG_URL=${ENV_SERVER_CONFIG_HOST}:${ENV_SERVER_CONFIG_PORT}
+#      # PostgreSQL
+#      - APP_POSTGRESQL_HOST=${ENV_APP_POSTGRESQL_HOST}
+#      - APP_POSTGRESQL_PORT=${ENV_APP_POSTGRESQL_PORT}
+#      - APP_POSTGRESQL_NAME=${ENV_PROJECTS_SERVICE_DATABASE}
+#      - APP_POSTGRESQL_USER=${ENV_APP_POSTGRESQL_USER}
+#      - APP_POSTGRESQL_PASSWORD=${ENV_APP_POSTGRESQL_PASSWORD}
+#    depends_on:
+#      - postgres
+#      - config-server
+#    networks:
+#      - microservices-network
+#    logging:
+#      driver: "json-file"
+#      options:
+#        max-size: "10m"
+#        max-file: "3"
+#
+#  # Analytics Service
+#  analytics-service:
+#    container_name: analytics-service
+#    image: analytics-service:latest
+#    build: ../AnalyticsService
+#    ports:
+#      - "8004:8004"
+#    environment:
+#      - SERVER_PORT=${ENV_ANALYTICS_SERVICE_PORT}
+#      - CLOUD_CONFIG_URL=${ENV_SERVER_CONFIG_HOST}:${ENV_SERVER_CONFIG_PORT}
+#      # PostgreSQL
+#      - APP_POSTGRESQL_HOST=${ENV_APP_POSTGRESQL_HOST}
+#      - APP_POSTGRESQL_PORT=${ENV_APP_POSTGRESQL_PORT}
+#      - APP_POSTGRESQL_NAME=${ENV_PROJECTS_SERVICE_DATABASE}
+#      - APP_POSTGRESQL_USER=${ENV_APP_POSTGRESQL_USER}
+#      - APP_POSTGRESQL_PASSWORD=${ENV_APP_POSTGRESQL_PASSWORD}
+#       # Kafka
+#      - KAFKA_URL=${ENV_KAFKA_URL}
+#    depends_on:
+#      - config-server
+#      - postgres
+#      - kafka
+#    networks:
+#      - microservices-network
+
+
+networks:
+  microservices-network:
+    driver: bridge

@@ -1,0 +1,30 @@
+global:
+  scrape_interval: 1s
+
+scrape_configs:
+
+  - job_name: 'user-manager-service'
+    metrics_path: '/q/metrics'
+    static_configs:
+      - targets: [ 'user-service-quarkus:8001' ]
+
+  - job_name: 'task-manager-service'
+    metrics_path: '/q/metrics'
+    static_configs:
+      - targets: ['task-manager-service:8002']
+
+  - job_name: 'project-manager-service'
+    metrics_path: '/q/metrics'
+    static_configs:
+      - targets: ['project-manager-service:8003']
+
+  - job_name: 'analytics-service'
+    metrics_path: '/q/metrics'
+    static_configs:
+      - targets: [ 'analytics-service:8004' ]
+
+  - job_name: 'api-gateway'
+    metrics_path: '/q/metrics'
+    static_configs:
+      - targets: [ 'api-gateway:8080' ]
+

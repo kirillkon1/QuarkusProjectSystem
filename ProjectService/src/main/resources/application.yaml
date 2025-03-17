@@ -1,0 +1,31 @@
+quarkus:
+  http:
+    port: ${SERVER_PORT:5003}
+  application:
+    name: project-service
+    version: 1.0.0
+  datasource:
+    db-kind: postgresql
+    username: ${APP_POSTGRESQL_USER:postgres}
+    password: ${APP_POSTGRESQL_PASSWORD:postgres}
+    reactive:
+      url: vertx-reactive:postgresql://${APP_POSTGRESQL_HOST:localhost}:${APP_POSTGRESQL_PORT:5432}/${APP_POSTGRESQL_NAME:projects_db}
+    jdbc: false
+
+  hibernate-orm:
+    database:
+      generation: update
+    log:
+      sql: false
+
+  jwt:
+    token-lifetime: 36000
+    issuer: "Quakus" # ??????
+    sign:
+      key:
+        secret: my_super_secret_key_my_super_secret_key
+
+  micrometer:
+    export:
+      prometheus:
+        enabled: true
